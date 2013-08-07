@@ -4,6 +4,8 @@ using Android.Views;
 using Android.Widget;
 using Android.Dialog;
 using System.Linq;
+using Android.Graphics;
+using Java.IO;
 
 namespace DialogSampleApp
 {
@@ -17,6 +19,11 @@ namespace DialogSampleApp
     [Activity(Label = "Android.Dialog Sample", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustPan)]
     public class MainDialogActivity : DialogActivity
     {
+
+        public static string DRAWING_SAVE_LOCATION = Android.OS.Environment.ExternalStorageDirectory + File.Separator + "drawing_save_location.png";
+        public static string DRAWING_SAVE_LOCATION_ONE = Android.OS.Environment.ExternalStorageDirectory + File.Separator + "drawing_save_location_one.png";
+        public static string DRAWING_SAVE_LOCATION_TWO = Android.OS.Environment.ExternalStorageDirectory + File.Separator + "drawing_save_location_two.png";
+        public static string DRAWING_SAVE_LOCATION_THREE = Android.OS.Environment.ExternalStorageDirectory + File.Separator + "drawing_save_location_three.png";
         protected void StartNew()
         {
             StartActivity(typeof(DialogListViewActivity));
@@ -45,7 +52,7 @@ namespace DialogSampleApp
                 new Section("Test Header", "Test Footer")
                 {
                     new ButtonElement("DialogActivity", (o, e) => StartNew()),
-                    new StringElement("DialogListView Activity", Resource.Layout.dialog_labelfieldright)
+                    new StringElement("DialogListView Activity", (int)DroidResources.ElementLayout.dialog_labelfieldright)
                     {
                         Click = (o, e) => ClickList(),
                     },
@@ -55,6 +62,17 @@ namespace DialogSampleApp
                     {
                         Click = (o, e) => ClickElementTest(),
                     },
+                },
+                new Section("Images")
+                {
+                    new DrawingElement("Signature Line", BitmapFactory.DecodeResource(Resources, Resource.Drawable.sigline), DRAWING_SAVE_LOCATION),
+                    new DrawingElement("Signature Way Too Big of Image", 
+                                       BitmapFactory.DecodeResource(Resources, Resource.Drawable.siglineverybig), DRAWING_SAVE_LOCATION_ONE),
+                    new DrawingElement("MDPI MAX Drawing Field", 
+                                       BitmapFactory.DecodeResource(Resources, Resource.Drawable.oddlyshapeddrawingfieldmdpimax), DRAWING_SAVE_LOCATION_TWO),
+                    new DrawingElement("Very Oddly Shaped Drawing Field With A lot of Chars in Description", 
+                                       BitmapFactory.DecodeResource(Resources, Resource.Drawable.veryoddlyshapeddrawingfield), DRAWING_SAVE_LOCATION_THREE)
+
                 },
                 new Section("Part II")
                 {
@@ -69,7 +87,7 @@ namespace DialogSampleApp
                 new Section("Group", new ViewElement(Android.Resource.Layout.SimpleListItem1)
                     { Populate = view => { view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = "Custom footer view"; }, })
                 {
-                    (Element)new RootElement("Radio Group", new Android.Dialog.RadioGroup("dessert", 2))
+                    new RootElement("Radio Group", new Android.Dialog.RadioGroup("dessert", 2))
                     {
                         new Section
                         {
@@ -77,7 +95,7 @@ namespace DialogSampleApp
                             new RadioElement("Honeycomb", "dessert"),
                             new RadioElement("Gingerbread", "dessert"),
                         },
-                    },
+                    } as Element,
                 }
             };
 
